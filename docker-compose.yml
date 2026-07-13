@@ -1,0 +1,21 @@
+services:
+  hospital-api:
+    build: .
+    container_name: hospital-management-api
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      DB_PATH: /app/data/hospital.db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys,os; p=int(os.environ.get('PORT',8080)); r=urllib.request.urlopen('http://127.0.0.1:%s/' % p); sys.exit(0 if r.getcode()==200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    volumes:
+      - hospital_data:/app/data
+
+volumes:
+  hospital_data:
